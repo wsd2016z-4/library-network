@@ -1,0 +1,84 @@
+package com.wsd.library.behaviours;
+
+import java.math.BigDecimal;
+
+import com.wsd.library.contentparser.ContentParser;
+import com.wsd.library.model.UserData;
+
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+
+// Ten behaviour dziala non stop i wyzwala wszystkie inne
+public class AwaitClientServer extends CyclicBehaviour {
+
+	private static final long serialVersionUID = -5820738946553366666L;
+	
+	@Override
+	public void action() {
+		ACLMessage msg = myAgent.receive();
+		if (msg != null) {
+			// Tutaj wyci¹gamy dane z wiadomoœci i procesujemy odpowiedni behaviour
+			// AID msgSender = msg.getSender(); 	
+			String msgContent = msg.getContent();
+			ContentParser contentParser = new ContentParser(msgContent);
+			String actionType = contentParser.getActionType();
+			switch (actionType) {
+				case BehaviourTypes.LOG_USER:
+					myAgent.addBehaviour(new LogUserBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN), 
+															contentParser.getRootsChildValue(ContentParser.CHILD_PASS)));
+					break;
+				case BehaviourTypes.CHECK_LIMIT:
+					myAgent.addBehaviour(new CheckLimitBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN)));
+					break;
+				case BehaviourTypes.CREATE_ACCOUNT:
+					myAgent.addBehaviour(new CreateAccountBehaviour(getUserModelFromMsg(contentParser)));
+					break;
+				case BehaviourTypes.PAY:
+					myAgent.addBehaviour(new PayBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN),
+							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
+					break;
+				case BehaviourTypes.TRANSFER_MONEY:
+					myAgent.addBehaviour(new TransferMoneyBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN),
+							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
+					break;
+				case BehaviourTypes.WRITE_HISTORY:
+					myAgent.addBehaviour(new PayBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN),
+							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
+					break;
+				case BehaviourTypes.SEARCH_BOOKS:
+					// TODO z msgContent trzeba wyciagac tutaj kryteria wyszukiwania i wkladac do tego konstruktora
+					myAgent.addBehaviour(new SearchBooksBehaviour());
+					break;
+				case BehaviourTypes.ISSUE_BOOK:
+					// TODO z msgContent wyciagac z ktorego warehouse i jaka ksiazke chcemy wypozyczyc
+					myAgent.addBehaviour(new IssueBookBehaviour());
+					break;
+				case BehaviourTypes.BOOK_RETURN:
+					// TODO z msgContent wyciagac do ktorego warehouse i czy jest miejsce na zwarcana ksiazke
+					myAgent.addBehaviour(new BookReturnBehaviour());
+					break;
+					// TODO z msgContent wyciagac w ktorym warehouse chcemy zamowic ksiazke i dokad ma byc ona dostarczona
+				case BehaviourTypes.ORDER_BOOK:	
+					// TODO chyba wyciganie tylko jakiej ksiazki i z ktorego automatu
+					myAgent.addBehaviour(new OrderBookBehaviour());
+					break;
+				default:
+					System.out.println("No action type.");
+					break;
+			}	
+		} 
+		//System.out.println("Waiting for messages.");
+	}
+	
+	// TODO ta metoda tutaj nie pasuje
+	private UserData getUserModelFromMsg(ContentParser contentParser) {
+		UserData userData = new UserData();
+		userData.setUserLogin(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN));
+		userData.setUserPass(contentParser.getRootsChildValue(ContentParser.CHILD_PASS));
+		userData.setName(contentParser.getRootsChildValue(ContentParser.CHILD_NAME));
+		userData.setSurname(contentParser.getRootsChildValue(ContentParser.CHILD_SURNAME));
+		userData.setAddress(contentParser.getRootsChildValue(ContentParser.CHILD_ADDRESS));
+		return userData;
+	}
+
+}
