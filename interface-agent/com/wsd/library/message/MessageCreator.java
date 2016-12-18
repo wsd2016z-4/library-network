@@ -11,7 +11,8 @@ public class MessageCreator {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
 		for (AID receiver : receivers)
 			message.addReceiver(receiver);
-		String content = "<action name=\"searchBooks\"><title>" + title + "</title></action>";
+		String content = "<action name=\"searchBooks\"><book status=\"available\"><title>" 
+											+ title + "</title></book></action>";
 		message.setContent(content);
 		return message;
 	}
