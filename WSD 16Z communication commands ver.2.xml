@@ -49,7 +49,11 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	(query <!--request-->
 		:sender InterfaceAgent
 		:receiver WherehouseAgent
-		:content "<action name="searchBooks">/book[@status=available]/title[text()=Everyday Italian]</action>"
+		:content "<action name="searchBooks">
+				  		<book status="available">
+							<title>Everyday Italian</title>
+						</book>
+  				  </action>"
 	)
 	(request <!--response-->
 		:sender WherehouseAgent
