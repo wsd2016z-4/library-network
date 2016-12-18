@@ -49,9 +49,12 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	(request <!--request-->
 		:sender InterfaceAgent
 		:receiver WarehouseAgent
-		:content "	<action name="searchBooks">
-						<title>Everyday Italian</title>
-					</action>"
+		:content "<action name="searchBooks">
+				  		<book status="available">
+							<title>Everyday Italian</title>
+						</book>
+				  </action>"
+
 	)
 	(inform <!--response jeśli warehouse ma książkę o danym tytule-->
 		:sender WarehouseAgent
