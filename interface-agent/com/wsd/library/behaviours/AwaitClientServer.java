@@ -2,7 +2,7 @@ package com.wsd.library.behaviours;
 
 import java.math.BigDecimal;
 
-import com.wsd.library.contentparser.ContentParser;
+import com.wsd.library.message.ContentParser;
 import com.wsd.library.model.UserData;
 
 import jade.core.behaviours.CyclicBehaviour;
@@ -46,8 +46,8 @@ public class AwaitClientServer extends CyclicBehaviour {
 							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
 					break;
 				case BehaviourTypes.SEARCH_BOOKS:
-					// TODO z msgContent trzeba wyciagac tutaj kryteria wyszukiwania i wkladac do tego konstruktora
-					myAgent.addBehaviour(new SearchBooksBehaviour());
+					if (msg.getPerformative() == ACLMessage.REQUEST)
+						myAgent.addBehaviour(new SearchBooksBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_TITLE)));
 					break;
 				case BehaviourTypes.ISSUE_BOOK:
 					// TODO z msgContent wyciagac z ktorego warehouse i jaka ksiazke chcemy wypozyczyc

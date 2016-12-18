@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS `elibrary`.`Books` (
   `Author` VARCHAR(45) NULL,
   `Sygnature` INT NULL,
   `Price` DOUBLE NULL,
+  `ISBN` VARCHAR(13) NULL,
+  `Year` INT(4) NULL,
+  `Weight` INT NULL,
   PRIMARY KEY (`idBooks`))
 ENGINE = InnoDB;
 

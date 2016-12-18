@@ -1,10 +1,15 @@
-package com.wsd.library.contentparser;
+package com.wsd.library.message;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
+
+import com.wsd.library.model.BooksData;
 
 public class ContentParser {
 	
@@ -16,6 +21,12 @@ public class ContentParser {
 	public static final String CHILD_SURNAME = "surname";
 	public static final String CHILD_ADDRESS = "address";
 	public static final String CHILD_PRICE ="price";
+	public static final String CHILD_TITLE ="title";
+	public static final String CHILD_ID ="id";
+	public static final String CHILD_AUTHOR ="author";
+	public static final String CHILD_ISBN = "isbn";
+	public static final String CHILD_YEAR = "year";
+	public static final String CHILD_WEIGHT = "weight";
 	
 	private Document document;
 	
@@ -59,4 +70,21 @@ public class ContentParser {
 			return null;
 	}
 	
+	public List<BooksData> getBooksIdList() {
+		Element rootElement = getRootElement();
+		List<Element> books = rootElement.getChildren();
+		List<BooksData> ret = new ArrayList<BooksData>();
+		for (Element book: books) {
+			BooksData booksData = new BooksData();
+			booksData.setAuthor(book.getChild(CHILD_AUTHOR).getValue());
+			booksData.setPrice(new BigDecimal(book.getChild(CHILD_PRICE).getValue()));
+			booksData.setSygnature(Integer.parseInt(book.getChild(CHILD_ID).getValue()));
+			booksData.setTitle(book.getChild(CHILD_TITLE).getValue());
+			booksData.setIsbn(book.getChild(CHILD_ISBN).getValue());
+			booksData.setYear(Integer.parseInt(book.getChild(CHILD_YEAR).getValue()));
+			booksData.setWeight(Integer.parseInt(book.getChild(CHILD_WEIGHT).getValue()));
+			ret.add(booksData);
+		}
+		return ret;
+	}
 }

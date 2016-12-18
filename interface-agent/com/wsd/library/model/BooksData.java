@@ -18,7 +18,37 @@ public class BooksData {
 	private int sygnature;
 	@Column(name = "Price")
 	private BigDecimal price;
+	@Column(name = "ISBN")
+	private String isbn;
+	@Column(name = "Year")
+	private int year;
+	@Column(name = "Weight")
+	private int weight;
 	
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	public int getId() {
 		return id;
 	}
