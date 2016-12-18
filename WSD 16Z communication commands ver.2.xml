@@ -9,7 +9,7 @@ SPIS TREŚCI
 		1.5. REJESTRACJA UŻYTKOWNIKA W SYSTEMIE
 		1.6. LOGOWANIE UŻYTKOWNIKA DO SYSTEMU
 		
-	2. AKCJE INICJUJE WherehouseAgent
+	2. AKCJE INICJUJE WarehouseAgent
 		2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI
 		2.2. ZAMÓW DRONA DO TRANSPORTU KSIĄŻKI
 		2.3. POBRANIE LOKALIZACJI INNEGO AGENTA
@@ -46,17 +46,15 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 <!--****************************************************************************************-->
 
 <!--1.1. SZUKANIE KSIĄŻKI PO TYTULE-->
-	(query <!--request-->
+	(request <!--request-->
 		:sender InterfaceAgent
-		:receiver WherehouseAgent
-		:content "<action name="searchBooks">
-				  		<book status="available">
-							<title>Everyday Italian</title>
-						</book>
-  				  </action>"
+		:receiver WarehouseAgent
+		:content "	<action name="searchBooks">
+						<title>Everyday Italian</title>
+					</action>"
 	)
-	(request <!--response-->
-		:sender WherehouseAgent
+	(inform <!--response jeśli warehouse ma książkę o danym tytule-->
+		:sender WarehouseAgent
 		:receiver InterfaceAgent
 		:content "<action name="searchBooks">
 						<book status="available"><!--statusy: available, reserved, borrowed-->
@@ -75,7 +73,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 <!--1.2. WYDANIE KSIĄŻKI UŻYTKOWNIKOWI-->
 	(request <!--request-->
 		:sender InterfaceAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="releaseBook">
 						<book>
 							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
@@ -83,7 +81,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 					</action>"
 	)
 	(request <!--response-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver InterfaceAgent
 		:content "<action name="releaseBook">
 						<book status="borrowed">
@@ -97,12 +95,12 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	<!--W miejscu do odbioru pozycji znajduje się wypożyczona książka-->
 	(request <!--request-->
 		:sender InterfaceAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="returnBook"></action>"
 	)
-	<!--WherehouseAgent skanuje id książki-->
+	<!--WarehouseAgent skanuje id książki-->
 	(request <!--response-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver InterfaceAgent
 		:content "<action name="returnBook">
 						<book status="available">
@@ -121,7 +119,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 <!--1.4. ZAMÓW KSIĄŻKĘ DO AUTOMATU-->
 	(request <!--request-->
 		:sender InterfaceAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="orderBook">
 						<book>
 							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
@@ -129,9 +127,9 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 						</book>
 					</action>"
 	)
-	<!--WherehouseAgent skanuje id książki-->
+	<!--WarehouseAgent skanuje id książki-->
 	(request <!--response-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver InterfaceAgent
 		:content "<action name="orderBook">
 						<book status="ordered">
@@ -165,12 +163,12 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 					</action>"
 	)
 <!--****************************************************************************************-->
-<!--****************************2. AKCJE INICJUJE WherehouseAgent***************************-->
+<!--****************************2. AKCJE INICJUJE WarehouseAgent***************************-->
 <!--****************************************************************************************-->
 
 <!--2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI-->
 	(request <!--request-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver DronAgent
 		:content "<action name="checkAvailability">
 						<book>
@@ -191,7 +189,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	)
 	(request <!--response-->
 		:sender DronAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="checkAvailability">
 						<answer agree="true">
 							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--id zgody, która jest przechowywana w pamięci drona przez pewien okres czasu-->
@@ -203,7 +201,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	)
 <!--2.2. ZAMÓW DRONA DO TRANSPORTU KSIĄŻKI-->
 	(request <!--request-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver DronAgent
 		:content "<action name="orderDron">
 						<book>
@@ -224,7 +222,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	)
 	(request <!--response-->
 		:sender DronAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="orderDron">
 						<answer agree="true">
 							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--id zgody, która jest przechowywana w pamięci drona przez następne 5min-->
@@ -235,13 +233,13 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	)
 <!--2.3. POBRANIE LOKALIZACJI INNEGO AGENTA-->
 	(request <!--request-->
-		:sender WherehouseAgent
-		:receiver WherehouseAgent
+		:sender WarehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="getLocalization"></action>"
 	)
 	(request <!--response-->
-		:sender WherehouseAgent
-		:receiver WherehouseAgent
+		:sender WarehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="localization">
 						<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
 						<latitude>22.196131</latitude>
@@ -256,7 +254,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 <!--3.1. POBRANIE KSIĄŻKI Z WERHOUSEAGENT-->
 	(request <!--request-->
 		:sender DronAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="getBook">
 						<book>
 							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
@@ -264,7 +262,7 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 					</action>"
 	)
 	(request <!--response-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver DronAgent
 		:content "<action name="getBook">
 						<answer agree="true"></answer>
@@ -275,12 +273,12 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 	<!--W miejscu do odbioru pozycji znajduje się wypożyczona książka-->
 	(request <!--request-->
 		:sender DronAgent
-		:receiver WherehouseAgent
+		:receiver WarehouseAgent
 		:content "<action name="returnBookByDron"></action>"
 	)
-	<!--WherehouseAgent skanuje id książki-->
+	<!--WarehouseAgent skanuje id książki-->
 	(request <!--response-->
-		:sender WherehouseAgent
+		:sender WarehouseAgent
 		:receiver DronAgent
 		:content "<action name="returnBookByDron">
 						<book status="ok"></book>
