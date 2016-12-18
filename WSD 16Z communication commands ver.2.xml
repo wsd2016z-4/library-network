@@ -6,6 +6,8 @@ SPIS TREŚCI
 		1.2. WYDANIE KSIĄŻKI UŻYTKOWNIKOWI
 		1.3. ZWROT KSIĄŻKI DO AUTOMATU PPRZEZ UŻYTKOWNIKA
 		1.4. ZAMÓW KSIĄŻKĘ DO AUTOMATU
+		1.5. REJESTRACJA UŻYTKOWNIKA W SYSTEMIE
+		1.6. LOGOWANIE UŻYTKOWNIKA DO SYSTEMU
 		
 	2. AKCJE INICJUJE WherehouseAgent
 		2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI
@@ -136,7 +138,28 @@ PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
 						<book status="error">powód wystąpienia błędu</book>
 					</action>"
 	)
-
+	
+<!--1.5. REJESTRACJA UŻYTKOWNIKA W SYSTEMIE-->
+	(request <!--request-->
+		:sender GUI
+		:receiver InterfaceAgent
+		:content "	<action name="CreateAccount">
+						<login>login</login>
+						<password>password</password>
+						<name>name</name>
+						<surname>surname</surname>
+						<address>address</address>
+					</action>"
+	)
+<!--1.5. LOGOWANIE UŻYTKOWNIKA DO SYSTEMU-->
+	(request <!--request-->
+		:sender GUI
+		:receiver InterfaceAgent
+		:content "	<action name="LogUser">
+						<login>login</login>
+						<password>password</password>
+					</action>"
+	)
 <!--****************************************************************************************-->
 <!--****************************2. AKCJE INICJUJE WherehouseAgent***************************-->
 <!--****************************************************************************************-->
