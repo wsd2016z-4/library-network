@@ -1,0 +1,277 @@
+<!--
+SPIS TREŚCI
+		
+	1. AKCJE INICJUJE InterfaceAgent
+		1.1. SZUKANIE KSIĄŻKI PO TYTULE
+		1.2. WYDANIE KSIĄŻKI UŻYTKOWNIKOWI
+		1.3. ZWROT KSIĄŻKI DO AUTOMATU PPRZEZ UŻYTKOWNIKA
+		1.4. ZAMÓW KSIĄŻKĘ DO AUTOMATU
+		
+	2. AKCJE INICJUJE WherehouseAgent
+		2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI
+		2.2. ZAMÓW DRONA DO TRANSPORTU KSIĄŻKI
+		2.3. POBRANIE LOKALIZACJI INNEGO AGENTA
+		
+	3. AKCJE INICJUJE DronAgent
+		3.1. POBRANIE KSIĄŻKI Z WERHOUSEAGENT
+		3.2. ZWROT KSIĄŻKI DO WERHOUSEAGENT
+		
+-->
+<!--
+PRZYKŁADOWE SCENARIUSZE UŻYCIA CAŁEGO SYSTEMU
+	I. 	REJESTRACJA/LOGOWANIE
+			InterfaceAgent <-> dbUsers
+	II.	WYPOŻYCZENIE KSIĄŻKI Z AUTOMATU, PRZY KTÓRYM ZNAJDUJE SIĘ UŻYTKOWNIK
+			1. 1.1. SZUKANIE KSIĄŻKI PO TYTULE
+			2. InterfaceAgent <-> dbUsers
+			3. 1.2. WYDANIE KSIĄŻKI UŻYTKOWNIKOWI
+	III.ZWROT KSIĄŻKI DO AUTOMATU PRZEZ UŻYTKOWNIKA
+			1. 1.3. ZWROT KSIĄŻKI DO AUTOMATU PPRZEZ UŻYTKOWNIKA
+			2. InterfaceAgent <-> dbUsers
+	IV.	ZAMÓWIENIE KSIĄŻKI DO AUTOMATU, PRZY KTÓRYM ZNAJDUJE SIĘ UŻYTKOWNIK
+			1. 1.1. SZUKANIE KSIĄŻKI PO TYTULE
+			2. InterfaceAgent <-> dbUsers
+			3. 1.4. ZAMÓW KSIĄŻKĘ DO AUTOMATU
+			4. 2.3. POBRANIE LOKALIZACJI INNEGO AGENTA
+			5. 2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI
+			6. 2.2. ZAMÓW DRONA DO TRANSPORTU KSIĄŻKI
+			7. 3.1. POBRANIE KSIĄŻKI Z WERHOUSEAGENT
+			8. 3.2. ZWROT KSIĄŻKI DO WERHOUSEAGENT
+-->
+
+<!--****************************************************************************************-->
+<!--****************************1. AKCJE INICJUJE InterfaceAgent****************************-->
+<!--****************************************************************************************-->
+
+<!--1.1. SZUKANIE KSIĄŻKI PO TYTULE-->
+	(query <!--request-->
+		:sender InterfaceAgent
+		:receiver WherehouseAgent
+		:content "<action name="searchBooks">/book[@status=available]/title[text()=Everyday Italian]</action>"
+	)
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver InterfaceAgent
+		:content "<action name="searchBooks">
+						<book status="available"><!--statusy: available, reserved, borrowed-->
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<isbn>978-2-1234-5680-3</isbn>
+							<title>Everyday Italian</title>
+							<author>Giada De Laurentiis</author>
+							<year>2005</year>
+							<price>30.00</price>
+							<weight>200</weight>
+						</book>
+						...
+						<book status="available">...</book>
+					</action>"
+	)
+<!--1.2. WYDANIE KSIĄŻKI UŻYTKOWNIKOWI-->
+	(request <!--request-->
+		:sender InterfaceAgent
+		:receiver WherehouseAgent
+		:content "<action name="releaseBook">
+						<book>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+						</book>
+					</action>"
+	)
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver InterfaceAgent
+		:content "<action name="releaseBook">
+						<book status="borrowed">
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+						</book>
+						<!--or-->
+						<book status="error">powód wystąpienia błędu...</book>
+					</action>"
+	)
+<!--1.3. ZWROT KSIĄŻKI DO AUTOMATU PPRZEZ UŻYTKOWNIKA-->
+	<!--W miejscu do odbioru pozycji znajduje się wypożyczona książka-->
+	(request <!--request-->
+		:sender InterfaceAgent
+		:receiver WherehouseAgent
+		:content "<action name="returnBook"></action>"
+	)
+	<!--WherehouseAgent skanuje id książki-->
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver InterfaceAgent
+		:content "<action name="returnBook">
+						<book status="available">
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<isbn>978-2-1234-5680-3</isbn>
+							<title>Everyday Italian</title>
+							<author>Giada De Laurentiis</author>
+							<year>2005</year>
+							<price>30.00</price>
+							<weight>200</weight>
+						</book>
+						<!--or-->
+						<book status="error">powód wystąpienia błędu...</book>
+					</action>"
+	)
+<!--1.4. ZAMÓW KSIĄŻKĘ DO AUTOMATU-->
+	(request <!--request-->
+		:sender InterfaceAgent
+		:receiver WherehouseAgent
+		:content "<action name="orderBook">
+						<book>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<weight>200</weight>
+						</book>
+					</action>"
+	)
+	<!--WherehouseAgent skanuje id książki-->
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver InterfaceAgent
+		:content "<action name="orderBook">
+						<book status="ordered">
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<time>3600</time>
+						</book>
+						<!--or-->
+						<book status="error">powód wystąpienia błędu</book>
+					</action>"
+	)
+
+<!--****************************************************************************************-->
+<!--****************************2. AKCJE INICJUJE WherehouseAgent***************************-->
+<!--****************************************************************************************-->
+
+<!--2.1. SPRAWDŹ DOSTĘPNOŚĆ DRONA DO TRANSPORTU KSIĄŻKI-->
+	(request <!--request-->
+		:sender WherehouseAgent
+		:receiver DronAgent
+		:content "<action name="checkAvailability">
+						<book>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<weight>200</weight>
+						</book>
+						<from>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+							<latitude>21.196131</latitude>
+							<longitude>52.1498551</longitude>
+						</from>
+						<to>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+							<latitude>22.196131</latitude>
+							<longitude>53.1498551</longitude>
+						</to>
+					</action>"
+	)
+	(request <!--response-->
+		:sender DronAgent
+		:receiver WherehouseAgent
+		:content "<action name="checkAvailability">
+						<answer agree="true">
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--id zgody, która jest przechowywana w pamięci drona przez pewien okres czasu-->
+							<waiting>500</waiting><!--czas, po którym dron zapomina o wyliczonym czasie/obiekcie w sekundach-->
+							<time>3600</time><!--czas transportu książki w sekundach-->
+						</answer>
+						<answer agree="false">powód odmowy....</answer>
+					</action>"
+	)
+<!--2.2. ZAMÓW DRONA DO TRANSPORTU KSIĄŻKI-->
+	(request <!--request-->
+		:sender WherehouseAgent
+		:receiver DronAgent
+		:content "<action name="orderDron">
+						<book>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+							<weight>200</weight>
+						</book>
+						<from>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+							<latitude>21.196131</latitude>
+							<longitude>52.1498551</longitude>
+						</from>
+						<to>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+							<latitude>22.196131</latitude>
+							<longitude>53.1498551</longitude>
+						</to>
+					</action>"
+	)
+	(request <!--response-->
+		:sender DronAgent
+		:receiver WherehouseAgent
+		:content "<action name="orderDron">
+						<answer agree="true">
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--id zgody, która jest przechowywana w pamięci drona przez następne 5min-->
+							<time>3600</time><!--czas przewiezienia książki w sekundach-->
+						</answer>
+						<answer agree="false">powód odmowy....</answer>
+					</action>"
+	)
+<!--2.3. POBRANIE LOKALIZACJI INNEGO AGENTA-->
+	(request <!--request-->
+		:sender WherehouseAgent
+		:receiver WherehouseAgent
+		:content "<action name="getLocalization"></action>"
+	)
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver WherehouseAgent
+		:content "<action name="localization">
+						<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+						<latitude>22.196131</latitude>
+						<longitude>53.1498551</longitude>
+					</action>"
+	)
+
+<!--****************************************************************************************-->
+<!--******************************3. AKCJE INICJUJE DronAgent*******************************-->
+<!--****************************************************************************************-->
+
+<!--3.1. POBRANIE KSIĄŻKI Z WERHOUSEAGENT-->
+	(request <!--request-->
+		:sender DronAgent
+		:receiver WherehouseAgent
+		:content "<action name="getBook">
+						<book>
+							<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+						</book>
+					</action>"
+	)
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver DronAgent
+		:content "<action name="getBook">
+						<answer agree="true"></answer>
+						<answer agree="false">powód odmowy....</answer>
+					</action>"
+	)
+<!--3.2. ZWROT KSIĄŻKI DO WERHOUSEAGENT-->
+	<!--W miejscu do odbioru pozycji znajduje się wypożyczona książka-->
+	(request <!--request-->
+		:sender DronAgent
+		:receiver WherehouseAgent
+		:content "<action name="returnBookByDron"></action>"
+	)
+	<!--WherehouseAgent skanuje id książki-->
+	(request <!--response-->
+		:sender WherehouseAgent
+		:receiver DronAgent
+		:content "<action name="returnBookByDron">
+						<book status="ok"></book>
+						<!--or-->
+						<book status="error">powód wystąpienia błędu...</book>
+					</action>"
+	)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
