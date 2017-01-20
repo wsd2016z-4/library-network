@@ -1,0 +1,16 @@
+<action name="CreateAccount">
+<login>Jakislogin</login>
+<password>haslo</password>
+<name>imie</name>
+<surname>naziwsko</surname>
+<address>wahszawa</address>
+</action>
+
+<action name="LogUser">
+<login>Jakislogin</login>
+<password>haslo</password>
+</action>
+
+<action name="CheckLimit">
+<login>Jakislogin</login>
+</action>
