@@ -27,6 +27,7 @@ public class ContentParser {
 	public static final String CHILD_ISBN = "isbn";
 	public static final String CHILD_YEAR = "year";
 	public static final String CHILD_WEIGHT = "weight";
+	public static final String CHILD_BOOKID = "bookid";
 	
 	private Document document;
 	
@@ -87,4 +88,19 @@ public class ContentParser {
 		}
 		return ret;
 	}
+	
+	public BooksData getBook() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		BooksData booksData = new BooksData();
+		booksData.setAuthor(book.getChild(CHILD_AUTHOR).getValue());
+		booksData.setPrice(new BigDecimal(book.getChild(CHILD_PRICE).getValue()));
+		booksData.setSygnature(Integer.parseInt(book.getChild(CHILD_ID).getValue()));
+		booksData.setTitle(book.getChild(CHILD_TITLE).getValue());
+		booksData.setIsbn(book.getChild(CHILD_ISBN).getValue());
+		booksData.setYear(Integer.parseInt(book.getChild(CHILD_YEAR).getValue()));
+		booksData.setWeight(Integer.parseInt(book.getChild(CHILD_WEIGHT).getValue()));
+		return booksData;
+	}
+
 }

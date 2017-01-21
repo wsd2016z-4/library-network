@@ -16,6 +16,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 public class InterfaceAgent extends Agent{
 	private static final long serialVersionUID = 8687660691708013194L;
 	private List<AID> warehouses;
+	private AID connectedWarehouse;
 
 	protected void setup() {
 		// Cykliczny behaviour w ktorym sa parsowane message i uruchamiane inne
@@ -28,8 +29,8 @@ public class InterfaceAgent extends Agent{
 			protected void onTick() {
 				updateWarehouseAgentsList();
 			}
-		} );
-		
+		});
+		findConnectedWarehouse();
 	}
 	
 	protected void takeDown() {
@@ -41,6 +42,10 @@ public class InterfaceAgent extends Agent{
 
 	public void setWarehouses(List<AID> warehouses) {
 		this.warehouses = warehouses;
+	}
+	
+	public AID getConnectedWarehouse() {
+		return connectedWarehouse;
 	}
 
 	private void updateWarehouseAgentsList() {
@@ -54,6 +59,22 @@ public class InterfaceAgent extends Agent{
 			for (int i = 0; i < result.length; ++i) {
 				warehouses.add(result[i].getName());
 			}
+		}
+		catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
+	
+	private void findConnectedWarehouse() {
+		int number = Integer.valueOf(this.getName().split("-")[2]);
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription serviceDescription = new ServiceDescription();
+		serviceDescription.setType("warehouse-agent");
+		serviceDescription.setName("warehouse-agent-" + number);
+		template.addServices(serviceDescription);
+		try {
+			DFAgentDescription[] result = DFService.search(this, template);
+			connectedWarehouse = result[0].getName();
 		}
 		catch (FIPAException fe) {
 			fe.printStackTrace();

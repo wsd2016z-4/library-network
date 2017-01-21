@@ -25,7 +25,6 @@ public class CheckLimitBehaviour extends Behaviour{
 	
 	@Override
 	public void action() {
-		// TODO Zapytanie do bazy ile wypo¿yczonych, zwracamy czy >= maks 
 		userDAO.openCurrentSession();
 		UserData user = userDAO.findByLogin(userLogin);
 		userDAO.closeCurrentSession();

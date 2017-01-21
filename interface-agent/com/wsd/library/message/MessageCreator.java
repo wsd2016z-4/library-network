@@ -17,4 +17,12 @@ public class MessageCreator {
 		return message;
 	}
 	
+	public ACLMessage issueBookMessage(int bookId, AID receiver) {
+		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+		message.addReceiver(receiver);
+		String content = "<action name=\"issueBook\"><bookid>" + bookId + "</bookid></action>";
+		message.setContent(content);
+		return message;
+	}
+	
 }
