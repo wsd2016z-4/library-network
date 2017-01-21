@@ -42,15 +42,14 @@ public class AwaitClientServer extends CyclicBehaviour {
 							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
 					break;
 				case BehaviourTypes.WRITE_HISTORY:
-					myAgent.addBehaviour(new PayBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN),
-							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
+					myAgent.addBehaviour(new WriteHistoryBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_USERID)),
+							Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
 					break;
 				case BehaviourTypes.SEARCH_BOOKS:
 					if (msg.getPerformative() == ACLMessage.REQUEST)
 						myAgent.addBehaviour(new SearchBooksBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_TITLE)));
 					break;
 				case BehaviourTypes.ISSUE_BOOK:
-					// TODO z msgContent wyciagac z ktorego warehouse i jaka ksiazke chcemy wypozyczyc
 					myAgent.addBehaviour(new IssueBookBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
 					break;
 				case BehaviourTypes.BOOK_RETURN:
@@ -60,7 +59,7 @@ public class AwaitClientServer extends CyclicBehaviour {
 					// TODO z msgContent wyciagac w ktorym warehouse chcemy zamowic ksiazke i dokad ma byc ona dostarczona
 				case BehaviourTypes.ORDER_BOOK:	
 					// TODO chyba wyciganie tylko jakiej ksiazki i z ktorego automatu
-					myAgent.addBehaviour(new OrderBookBehaviour());
+					myAgent.addBehaviour(new OrderBookBehaviour(contentParser.getBooksId()));
 					break;
 				default:
 					System.out.println("No action type.");

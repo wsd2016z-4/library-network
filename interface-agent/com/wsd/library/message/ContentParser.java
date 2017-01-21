@@ -28,6 +28,7 @@ public class ContentParser {
 	public static final String CHILD_YEAR = "year";
 	public static final String CHILD_WEIGHT = "weight";
 	public static final String CHILD_BOOKID = "bookid";
+	public static final String CHILD_USERID = "userid";
 	
 	private Document document;
 	
@@ -101,6 +102,12 @@ public class ContentParser {
 		booksData.setYear(Integer.parseInt(book.getChild(CHILD_YEAR).getValue()));
 		booksData.setWeight(Integer.parseInt(book.getChild(CHILD_WEIGHT).getValue()));
 		return booksData;
+	}
+	
+	public int getBooksId() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		return Integer.valueOf(book.getChild(CHILD_ID).getValue());
 	}
 
 }

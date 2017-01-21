@@ -66,18 +66,21 @@ public class InterfaceAgent extends Agent{
 	}
 	
 	private void findConnectedWarehouse() {
-		int number = Integer.valueOf(this.getName().split("-")[2]);
-		DFAgentDescription template = new DFAgentDescription();
-		ServiceDescription serviceDescription = new ServiceDescription();
-		serviceDescription.setType("warehouse-agent");
-		serviceDescription.setName("warehouse-agent-" + number);
-		template.addServices(serviceDescription);
-		try {
-			DFAgentDescription[] result = DFService.search(this, template);
-			connectedWarehouse = result[0].getName();
-		}
-		catch (FIPAException fe) {
-			fe.printStackTrace();
+		String[] elems = this.getName().split("-");
+		if (elems.length > 2) {
+			int number = Integer.valueOf(elems[2]);
+			DFAgentDescription template = new DFAgentDescription();
+			ServiceDescription serviceDescription = new ServiceDescription();
+			serviceDescription.setType("warehouse-agent");
+			serviceDescription.setName("warehouse-agent-" + number);
+			template.addServices(serviceDescription);
+			try {
+				DFAgentDescription[] result = DFService.search(this, template);
+				connectedWarehouse = result[0].getName();
+			}
+			catch (FIPAException fe) {
+				fe.printStackTrace();
+			}
 		}
 	}
 

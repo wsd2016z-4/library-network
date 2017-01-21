@@ -25,4 +25,12 @@ public class MessageCreator {
 		return message;
 	}
 	
+	public ACLMessage orderBookMessage(int bookId, AID receiver) {
+		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+		message.addReceiver(receiver);
+		String content = "<action name=\"orderBook\"><book><id>" + bookId + "</id></book></action>";
+		message.setContent(content);
+		return message;
+	}
+	
 }
