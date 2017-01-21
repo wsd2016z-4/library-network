@@ -13,7 +13,8 @@ public final class SessionFactoryProvider {
 		Configuration configuration = new Configuration();
 		configuration.configure("hibernate.cfg.xml").addAnnotatedClass(UserData.class)
 														.addAnnotatedClass(UsersUptakesData.class)
-														.addAnnotatedClass(BooksData.class);;
+														.addAnnotatedClass(BooksData.class)
+														.addAnnotatedClass(UsersAccountData.class);
         StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
         sessionFactory = configuration.buildSessionFactory(ssrb.build());
     }

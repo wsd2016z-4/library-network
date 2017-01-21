@@ -5,7 +5,7 @@ import java.util.List;
 import com.wsd.library.model.UserData;
 import com.wsd.library.model.UsersUptakesData;
 
-public class UsersUptakesDAO extends DAOGeneric implements DAOInterface<UsersUptakesData, String>{
+public class UsersUptakesDAO extends DAOGeneric implements DAOInterface<UsersUptakesData, String> {
 
 	public UsersUptakesDAO() {
 	}

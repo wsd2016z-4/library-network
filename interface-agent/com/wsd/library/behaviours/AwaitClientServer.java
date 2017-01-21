@@ -66,7 +66,9 @@ public class AwaitClientServer extends CyclicBehaviour {
 					System.out.println("No action type.");
 					break;
 			}	
-		} 
+		} else {
+			block();
+		}
 		//System.out.println("Waiting for messages.");
 	}
 	

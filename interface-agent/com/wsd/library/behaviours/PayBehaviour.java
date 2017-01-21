@@ -2,12 +2,19 @@ package com.wsd.library.behaviours;
 
 import java.math.BigDecimal;
 
+import com.wsd.library.DAO.UserAccountDAO;
+import com.wsd.library.DAO.UserDAO;
+import com.wsd.library.model.UserData;
+import com.wsd.library.model.UsersAccountData;
+
 import jade.core.behaviours.Behaviour;
 
 public class PayBehaviour extends Behaviour {
 
 	private static final long serialVersionUID = 2585607017385742350L;
 	
+	private UserDAO userDAO;
+	private UserAccountDAO userAccountDAO;
 	private String userLogin;
 	private BigDecimal price;
 	
@@ -15,19 +22,30 @@ public class PayBehaviour extends Behaviour {
 		super();
 		this.userLogin = userLogin;
 		this.price = price;
+		userDAO = new UserDAO();
+		userAccountDAO = new UserAccountDAO();
 	}
 
 	@Override
 	public void action() {
-		// TODO Tutaj trzeba pobraæ z bazy stan konta klienta, jak mniejszy ni¿ to co do zap³acenia to zwróciæ komunikat
-		// a jak nie to zrealizowac platnosc (odjac w bazie mu tyle hajsu) i zwrocic ze sie powiodlo 
-		
+		userDAO.openCurrentSession();
+		UserData user = userDAO.findByLogin(userLogin);
+		userDAO.closeCurrentSession();
+		userAccountDAO.openCurrentSessionwithTransaction();
+		UsersAccountData usersAccountData = userAccountDAO.getUserAccount(user);
+		if (usersAccountData.getBalance() >= price.doubleValue()) {
+			double balance = usersAccountData.getBalance() - price.doubleValue();
+			usersAccountData.setBalance(balance);
+			userAccountDAO.update(usersAccountData);
+			System.out.println("Transkacja przebieg³a pomyœlnie.");
+		} else 
+			System.out.println("Za ma³o œrodków na koncie.");
+		userAccountDAO.closeCurrentSessionwithTransaction();
 	}
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
