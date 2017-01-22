@@ -8,6 +8,10 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
+import com.wsd.library.agent.DroneStatus;
+import java.util.UUID;
+import com.wsd.library.message.BookInfo;
+import com.wsd.library.message.WarehouseInfo;
 
 
 public class DroneAgentServiceBehaviour extends CyclicBehaviour {
@@ -15,18 +19,65 @@ public class DroneAgentServiceBehaviour extends CyclicBehaviour {
 	private Logger mLogger = Logger.getMyLogger(getClass().getName());
 	private MessageTemplate mExpectedTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 
+	private UUID mSessionID;
+
 	public DroneAgentServiceBehaviour(DroneAgent a) {
 		super(a);
 		mAgentRef = a;
 	}
 
 	void CheckDroneAvailability(ACLMessage msg, ACLMessage reply) {
-		// TODO must form an XML using ContentParser
-		// TODO must ask DroneAgent for status reply
+		String content = msg.getContent();
+
+		ContentParser parser = null;
+		try {
+			parser = new ContentParser(content);
+		} catch (Exception e) {
+			mLogger.log(Logger.SEVERE, "Failed to parse message from sender", e);
+			NotUnderstood(msg, reply, "Incorrect message");
+			return;
+		}
+
+		BookInfo book = parser.getBookInfo();
+		WarehouseInfo from = parser.getWarehouseInfo("from");
+		WarehouseInfo to = parser.getWarehouseInfo("to");
+
+		if (book == null || from == null || to == null)
+		{
+			mLogger.log(Logger.SEVERE, "Incomplete message received");
+			NotUnderstood(msg, reply, "Incomplete message");
+			return;
+		}
+
+		mLogger.log(Logger.INFO, "checkAvailability: Received book info id = " + book.id +
+								" weight = " + book.weight);
+		mLogger.log(Logger.INFO, "checkAvailability: Received source info id = " + from.id +
+								" lat = " + from.coords.latitude + " lon = " + from.coords.longitude);
+		mLogger.log(Logger.INFO, "checkAvailability: Received target info id = " + to.id +
+								" lat = " + to.coords.latitude + " lon = " + to.coords.longitude);
+
 		MessageCreator msgCreator = new MessageCreator();
 
-		reply.setPerformative(ACLMessage.REFUSE);
-		reply.setContent(msgCreator.FormAvailabilityResponse("Not yet implemented"));
+		reply.setPerformative(ACLMessage.INFORM);
+		DroneStatus status = mAgentRef.canTransferBook(book, from, to);
+		if (status == DroneStatus.AVAILABLE)
+		{
+			mSessionID = UUID.randomUUID();
+			reply.setContent(msgCreator.FormAvailableResponse(mSessionID.toString(), 10, 10));
+		}
+		else
+		{
+			String reason;
+			switch (status)
+			{
+			case INIT: reason = "UNINITIALIZED"; break;
+			case IN_TRANSIT: reason = "IN_TRANSIT"; break;
+			case CHARGING: reason = "CHARGING"; break;
+			case TOO_FAR: reason = "TOO_FAR"; break;
+			default: reason = "OTHER"; break;
+			}
+			reply.setContent(msgCreator.FormNotAvailableResponse(reason));
+		}
 	}
 
 	void OrderDrone(ACLMessage msg, ACLMessage reply) {
@@ -34,7 +85,7 @@ public class DroneAgentServiceBehaviour extends CyclicBehaviour {
 		MessageCreator msgCreator = new MessageCreator();
 
 		reply.setPerformative(ACLMessage.REFUSE);
-		reply.setContent(msgCreator.FormAvailabilityResponse("Not yet implemented"));
+		reply.setContent(msgCreator.FormNotAvailableResponse("Not implemented"));
 	}
 
 	void NotUnderstood(ACLMessage msg, ACLMessage reply, String act) {
