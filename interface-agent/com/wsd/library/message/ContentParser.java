@@ -29,6 +29,7 @@ public class ContentParser {
 	public static final String CHILD_WEIGHT = "weight";
 	public static final String CHILD_BOOKID = "bookid";
 	public static final String CHILD_USERID = "userid";
+	public static final String CHILD_AMOUNT = "amount";
 	
 	private Document document;
 	

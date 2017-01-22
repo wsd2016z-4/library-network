@@ -39,7 +39,7 @@ public class AwaitClientServer extends CyclicBehaviour {
 					break;
 				case BehaviourTypes.TRANSFER_MONEY:
 					myAgent.addBehaviour(new TransferMoneyBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN),
-							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_PRICE))));
+							new BigDecimal(contentParser.getRootsChildValue(ContentParser.CHILD_AMOUNT))));
 					break;
 				case BehaviourTypes.WRITE_HISTORY:
 					myAgent.addBehaviour(new WriteHistoryBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_USERID)),

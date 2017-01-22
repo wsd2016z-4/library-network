@@ -2,6 +2,11 @@ package com.wsd.library.behaviours;
 
 import java.math.BigDecimal;
 
+import com.wsd.library.DAO.UserAccountDAO;
+import com.wsd.library.DAO.UserDAO;
+import com.wsd.library.model.UserData;
+import com.wsd.library.model.UsersAccountData;
+
 import jade.core.behaviours.Behaviour;
 
 public class TransferMoneyBehaviour extends Behaviour {
@@ -11,6 +16,9 @@ public class TransferMoneyBehaviour extends Behaviour {
 	 */
 	private static final long serialVersionUID = -76751453014136098L;
 	
+	private UserDAO userDAO;
+	private UserAccountDAO userAccountDAO;
+	
 	private String userLogin;
 	private BigDecimal moneyAmount;
 
@@ -18,19 +26,28 @@ public class TransferMoneyBehaviour extends Behaviour {
 		super();
 		this.userLogin = userLogin;
 		this.moneyAmount = moneyAmount;
+		userDAO = new UserDAO();
+		userAccountDAO = new UserAccountDAO();
 	}
 
 	@Override
 	public void action() {
-		// TODO Tutaj siê trzeba zastanowiæ, byæ mo¿e po prostu bezwarunkowe dodanie kasy do konta usera 
-		// (przy zalozeniu ze jakis zewn. system obsluguje transakcje bankowa)
-		
+		userDAO.openCurrentSession();
+		UserData user = userDAO.findByLogin(userLogin);
+		userDAO.closeCurrentSession();
+		userAccountDAO.openCurrentSessionwithTransaction();
+		UsersAccountData usersAccountData = userAccountDAO.getUserAccount(user);
+		double balance = usersAccountData.getBalance();
+		balance += moneyAmount.doubleValue();
+		usersAccountData.setBalance(balance);
+		userAccountDAO.update(usersAccountData);
+		userAccountDAO.closeCurrentSessionwithTransaction();
+		System.out.println("Konto u¿ytkownika " + user.getUserLogin() + "zosta³o zasilone kwot¹ " + moneyAmount + " z³otych.");
 	}
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
