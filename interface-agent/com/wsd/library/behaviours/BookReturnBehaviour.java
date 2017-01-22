@@ -48,7 +48,6 @@ public class BookReturnBehaviour extends Behaviour {
 		case 1:
 			// Odebranie odpowiedzi od agenta
 			ACLMessage reply = ((InterfaceAgent) myAgent).getCurrentMessage();
-			messageTemplate.match(reply);
 			if (reply != null && messageTemplate.match(reply)) {
 				ContentParser contentParser = new ContentParser(reply.getContent());
 				if (reply.getPerformative() == ACLMessage.CONFIRM) {

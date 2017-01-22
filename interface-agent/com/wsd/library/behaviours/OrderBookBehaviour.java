@@ -1,5 +1,7 @@
 package com.wsd.library.behaviours;
 
+import java.util.Date;
+
 import com.wsd.library.DAO.UsersUptakesDAO;
 import com.wsd.library.agent.InterfaceAgent;
 import com.wsd.library.message.ContentParser;
@@ -13,13 +15,13 @@ public class OrderBookBehaviour extends Behaviour {
 	private static final long serialVersionUID = 5660656677933328483L;
 	private MessageTemplate messageTemplate;
 	private int step = 0;
-	private int booksId;
+	private String booksTitle;
 	private UsersUptakesDAO userUptakesDAO;
 	
 	
-	public OrderBookBehaviour(int booksId) {
+	public OrderBookBehaviour(String booksTitle) {
 		super();
-		this.booksId = booksId;
+		this.booksTitle = booksTitle;
 		userUptakesDAO = new UsersUptakesDAO();
 	}
 
@@ -29,7 +31,7 @@ public class OrderBookBehaviour extends Behaviour {
 		case 0:
 			// Wys³anie ACLMessage do WarehouseAgent z pytaniem o mo¿liwoœæ oddania ksiazki o danym id
 			MessageCreator messageCreator = new MessageCreator();
-			ACLMessage message = messageCreator.orderBookMessage(booksId, ((InterfaceAgent) myAgent).getConnectedWarehouse());
+			ACLMessage message = messageCreator.orderBookMessage(booksTitle, ((InterfaceAgent) myAgent).getConnectedWarehouse());
 			message.setSender(myAgent.getAID());
 			message.setConversationId(BehaviourTypes.ORDER_BOOK);
 			message.setReplyWith("request" + System.currentTimeMillis());
@@ -40,17 +42,18 @@ public class OrderBookBehaviour extends Behaviour {
 			break;
 		case 1:
 			// Odebranie odpowiedzi od agenta
-			ACLMessage reply = myAgent.receive(messageTemplate);
-			if (reply != null) {
+			ACLMessage reply = ((InterfaceAgent) myAgent).getCurrentMessage();
+			if (reply != null && messageTemplate.match(reply)) {
+				ContentParser contentParser = new ContentParser(reply.getContent());
 				if (reply.getPerformative() == ACLMessage.CONFIRM) {
-					ContentParser contentParser = new ContentParser(reply.getContent());
 					int booksId = contentParser.getBooksId();
-					System.out.println("Ksi¹¿ka o id: " + booksId + " zosta³a poprawnie zwrócona.");
-					userUptakesDAO.openCurrentSessionwithTransaction();
-					
-					
+					int booksTime = contentParser.getBooksTime();
+					Date date = new Date();
+					long time = date.getTime() + booksTime;
+					date.setTime(time);
+					System.out.println("Ksi¹¿ka o id: " + booksId + " zosta³a poprawnie zamówiona. Do odebrania " + date.toString());
 				} else if (reply.getPerformative() == ACLMessage.DISCONFIRM) {
-					System.out.println("Nie uda³o siê zwróciæ ksi¹¿ki.");
+					System.out.println(contentParser.getBooksStatus() + ": " + contentParser.getError());
 				}
 				step = 2;
 			}			

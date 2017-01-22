@@ -30,6 +30,7 @@ public class ContentParser {
 	public static final String CHILD_BOOKID = "bookid";
 	public static final String CHILD_USERID = "userid";
 	public static final String CHILD_AMOUNT = "amount";
+	public static final String CHILD_TIME = "time";
 	
 	private Document document;
 	
@@ -107,6 +108,18 @@ public class ContentParser {
 		Element rootElement = getRootElement();
 		Element book = rootElement.getChildren().get(0);
 		return Integer.valueOf(book.getChild(CHILD_ID).getValue());
+	}
+	
+	public int getBooksTime() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		return Integer.valueOf(book.getChild(CHILD_TIME).getValue());
+	}
+	
+	public String getBooksTitle() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		return book.getChild(CHILD_TITLE).getValue();
 	}
 	
 	public String getBooksStatus() {

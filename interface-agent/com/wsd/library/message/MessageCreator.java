@@ -28,15 +28,15 @@ public class MessageCreator {
 	public ACLMessage issueBookMessage(int bookId, AID receiver) {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
 		message.addReceiver(receiver);
-		String content = "<action name=\"issueBook\"><bookid>" + bookId + "</bookid></action>";
+		String content = "<action name=\"IssueBook\"><book><id>" + bookId + "</id></book></action>";
 		message.setContent(content);
 		return message;
 	}
 	
-	public ACLMessage orderBookMessage(int bookId, AID receiver) {
+	public ACLMessage orderBookMessage(String bookTitle, AID receiver) {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
 		message.addReceiver(receiver);
-		String content = "<action name=\"orderBook\"><book><id>" + bookId + "</id></book></action>";
+		String content = "<action name=\"OrderBook\"><book><title>" + bookTitle + "</title></book></action>";
 		message.setContent(content);
 		return message;
 	}

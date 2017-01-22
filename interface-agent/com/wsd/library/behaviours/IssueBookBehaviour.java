@@ -40,18 +40,15 @@ public class IssueBookBehaviour extends Behaviour {
 					MessageTemplate.MatchInReplyTo(message.getReplyWith()));
 			break;
 		case 1:
-			// Odebranie odpowiedzi od agenta
-			ACLMessage reply = myAgent.receive(messageTemplate);
-			if (reply != null) {
-				if (reply.getPerformative() == ACLMessage.CONFIRM) {
-					step = 2;
-					ContentParser contentParser = new ContentParser(reply.getContent());
-					BooksData book = contentParser.getBook();
-					System.out.println("Wydano ksi¹¿kê - " + book.getTitle());
-				} else if (reply.getPerformative() == ACLMessage.DISCONFIRM) {
-					step = 2;
-					System.out.println("B³¹d przy wydawaniu ksi¹¿ki");
-				}
+			// Interpretacja otrzymanej odpowiedzi
+			ACLMessage reply = ((InterfaceAgent) myAgent).getCurrentMessage();
+			if (reply != null && messageTemplate.match(reply)) {
+				ContentParser contentParser = new ContentParser(reply.getContent());
+				if (reply.getPerformative() == ACLMessage.CONFIRM) 
+					System.out.println(contentParser.getBooksStatus() + ": Wydano ksi¹¿kê - " + contentParser.getBook().getTitle());
+				else if (reply.getPerformative() == ACLMessage.DISCONFIRM) 
+					System.out.println(contentParser.getBooksStatus() + ": " + contentParser.getError());
+				step = 2;
 			}
 		}
 	}
