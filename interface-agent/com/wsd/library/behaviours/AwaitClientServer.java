@@ -52,7 +52,7 @@ public class AwaitClientServer extends CyclicBehaviour {
 						myAgent.addBehaviour(new SearchBooksBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_TITLE)));
 					break;
 				case BehaviourTypes.ISSUE_BOOK:
-					myAgent.addBehaviour(new IssueBookBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
+					myAgent.addBehaviour(new IssueBookBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID)), Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_USERID)));
 					break;
 				case BehaviourTypes.BOOK_RETURN:
 					myAgent.addBehaviour(new BookReturnBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN), Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
