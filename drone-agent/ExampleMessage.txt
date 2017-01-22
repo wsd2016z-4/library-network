@@ -1,0 +1,16 @@
+<action name="checkAvailability">
+<book>
+<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id>
+<weight>200</weight>
+</book>
+<from>
+<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+<latitude>21.196131</latitude>
+<longitude>52.1498551</longitude>
+</from>
+<to>
+<id>2c5be756-60f7-4d48-af99-e43df42e3edb</id><!--wherehoutse agent-->
+<latitude>21.236901</latitude>
+<longitude>52.321234</longitude>
+</to>
+</action>
