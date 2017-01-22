@@ -1,5 +1,6 @@
 package com.wsd.library.behaviours;
 
+import com.wsd.library.DAO.UsersUptakesDAO;
 import com.wsd.library.agent.InterfaceAgent;
 import com.wsd.library.message.ContentParser;
 import com.wsd.library.message.MessageCreator;
@@ -13,18 +14,20 @@ public class OrderBookBehaviour extends Behaviour {
 	private MessageTemplate messageTemplate;
 	private int step = 0;
 	private int booksId;
+	private UsersUptakesDAO userUptakesDAO;
 	
 	
 	public OrderBookBehaviour(int booksId) {
 		super();
 		this.booksId = booksId;
+		userUptakesDAO = new UsersUptakesDAO();
 	}
 
 	@Override
 	public void action() {
 		switch (step) {
 		case 0:
-			// Wys³anie ACLMessage do WarehouseAgent z pytaniem o ksiazke o danym tytule
+			// Wys³anie ACLMessage do WarehouseAgent z pytaniem o mo¿liwoœæ oddania ksiazki o danym id
 			MessageCreator messageCreator = new MessageCreator();
 			ACLMessage message = messageCreator.orderBookMessage(booksId, ((InterfaceAgent) myAgent).getConnectedWarehouse());
 			message.setSender(myAgent.getAID());
@@ -42,9 +45,12 @@ public class OrderBookBehaviour extends Behaviour {
 				if (reply.getPerformative() == ACLMessage.CONFIRM) {
 					ContentParser contentParser = new ContentParser(reply.getContent());
 					int booksId = contentParser.getBooksId();
-					System.out.println("Ksi¹¿ka o id: " + booksId + " zosta³a zamówiona.");
+					System.out.println("Ksi¹¿ka o id: " + booksId + " zosta³a poprawnie zwrócona.");
+					userUptakesDAO.openCurrentSessionwithTransaction();
+					
+					
 				} else if (reply.getPerformative() == ACLMessage.DISCONFIRM) {
-					System.out.println("Nie uda³o siê zamówiæ ksi¹¿ki.");
+					System.out.println("Nie uda³o siê zwróciæ ksi¹¿ki.");
 				}
 				step = 2;
 			}			

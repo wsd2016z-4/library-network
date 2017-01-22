@@ -2,6 +2,7 @@ package com.wsd.library.DAO;
 
 import java.util.List;
 
+import com.wsd.library.model.BooksData;
 import com.wsd.library.model.UserData;
 import com.wsd.library.model.UsersUptakesData;
 
@@ -43,6 +44,14 @@ public class UsersUptakesDAO extends DAOGeneric implements DAOInterface<UsersUpt
 		List<UsersUptakesData> result = (List<UsersUptakesData>) getCurrentSession().
 										createQuery("from UsersUptakesData UU where UU.userData = :user AND UU.endDate is null").
 											setParameter("user", user).getResultList();
+		return result.size();
+	}
+	
+	public int getUptake(UserData user, BooksData book) {
+		@SuppressWarnings("unchecked")
+		List<UsersUptakesData> result = (List<UsersUptakesData>) getCurrentSession().
+										createQuery("from UsersUptakesData UU where UU.userData = :user AND UU.booksData = :book AND UU.endDate is null").
+											setParameter("user", user).setParameter("book", book).getResultList();
 		return result.size();
 	}
 

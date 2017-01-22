@@ -3,9 +3,12 @@ package com.wsd.library.model;
 import java.math.BigDecimal;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "Books")
+@XmlRootElement(name = "book")
 public class BooksData {
 	@Id @GeneratedValue
 	@Column(name = "idBooks")
@@ -14,8 +17,6 @@ public class BooksData {
 	private String title;
 	@Column(name = "Author")
 	private String author;
-	@Column(name = "Sygnature")
-	private int sygnature;
 	@Column(name = "Price")
 	private BigDecimal price;
 	@Column(name = "ISBN")
@@ -28,7 +29,8 @@ public class BooksData {
 	public String getIsbn() {
 		return isbn;
 	}
-
+	
+	@XmlElement(name = "isbn")
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
 	}
@@ -37,6 +39,7 @@ public class BooksData {
 		return year;
 	}
 
+	@XmlElement(name = "year")
 	public void setYear(int year) {
 		this.year = year;
 	}
@@ -45,6 +48,7 @@ public class BooksData {
 		return weight;
 	}
 
+	@XmlElement(name = "weight")
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
@@ -53,6 +57,7 @@ public class BooksData {
 		return id;
 	}
 
+	@XmlElement(name = "id")
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -61,6 +66,7 @@ public class BooksData {
 		return title;
 	}
 
+	@XmlElement(name = "title")
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -69,22 +75,16 @@ public class BooksData {
 		return author;
 	}
 
+	@XmlElement(name = "author")
 	public void setAuthor(String author) {
 		this.author = author;
-	}
-
-	public int getSygnature() {
-		return sygnature;
-	}
-
-	public void setSygnature(int sygnature) {
-		this.sygnature = sygnature;
 	}
 
 	public BigDecimal getPrice() {
 		return price;
 	}
 
+	@XmlElement(name = "price")
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}

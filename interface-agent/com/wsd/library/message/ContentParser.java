@@ -81,7 +81,6 @@ public class ContentParser {
 			BooksData booksData = new BooksData();
 			booksData.setAuthor(book.getChild(CHILD_AUTHOR).getValue());
 			booksData.setPrice(new BigDecimal(book.getChild(CHILD_PRICE).getValue()));
-			booksData.setSygnature(Integer.parseInt(book.getChild(CHILD_ID).getValue()));
 			booksData.setTitle(book.getChild(CHILD_TITLE).getValue());
 			booksData.setIsbn(book.getChild(CHILD_ISBN).getValue());
 			booksData.setYear(Integer.parseInt(book.getChild(CHILD_YEAR).getValue()));
@@ -97,7 +96,6 @@ public class ContentParser {
 		BooksData booksData = new BooksData();
 		booksData.setAuthor(book.getChild(CHILD_AUTHOR).getValue());
 		booksData.setPrice(new BigDecimal(book.getChild(CHILD_PRICE).getValue()));
-		booksData.setSygnature(Integer.parseInt(book.getChild(CHILD_ID).getValue()));
 		booksData.setTitle(book.getChild(CHILD_TITLE).getValue());
 		booksData.setIsbn(book.getChild(CHILD_ISBN).getValue());
 		booksData.setYear(Integer.parseInt(book.getChild(CHILD_YEAR).getValue()));
@@ -110,5 +108,17 @@ public class ContentParser {
 		Element book = rootElement.getChildren().get(0);
 		return Integer.valueOf(book.getChild(CHILD_ID).getValue());
 	}
+	
+	public String getBooksStatus() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		return book.getAttributeValue("status");
+	}
 
+	public String getError() {
+		Element rootElement = getRootElement();
+		Element book = rootElement.getChildren().get(0);
+		return book.getValue();
+	}
+	
 }

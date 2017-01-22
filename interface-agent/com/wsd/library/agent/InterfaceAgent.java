@@ -12,11 +12,21 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
 
 public class InterfaceAgent extends Agent{
 	private static final long serialVersionUID = 8687660691708013194L;
 	private List<AID> warehouses;
 	private AID connectedWarehouse;
+	private ACLMessage currentMessage;
+	
+	public ACLMessage getCurrentMessage() {
+		return currentMessage;
+	}
+
+	public void setCurrentMessage(ACLMessage currentMessage) {
+		this.currentMessage = currentMessage;
+	}
 
 	protected void setup() {
 		// Cykliczny behaviour w ktorym sa parsowane message i uruchamiane inne

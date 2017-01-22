@@ -53,8 +53,7 @@ public class AwaitClientServer extends CyclicBehaviour {
 					myAgent.addBehaviour(new IssueBookBehaviour(Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
 					break;
 				case BehaviourTypes.BOOK_RETURN:
-					// TODO z msgContent wyciagac do ktorego warehouse i czy jest miejsce na zwarcana ksiazke
-					myAgent.addBehaviour(new BookReturnBehaviour());
+					myAgent.addBehaviour(new BookReturnBehaviour(contentParser.getRootsChildValue(ContentParser.CHILD_LOGIN), Integer.valueOf(contentParser.getRootsChildValue(ContentParser.CHILD_BOOKID))));
 					break;
 					// TODO z msgContent wyciagac w ktorym warehouse chcemy zamowic ksiazke i dokad ma byc ona dostarczona
 				case BehaviourTypes.ORDER_BOOK:	

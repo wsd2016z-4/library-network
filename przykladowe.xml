@@ -14,3 +14,28 @@
 <action name="CheckLimit">
 <login>Jakislogin</login>
 </action>
+
+<action name="Pay">
+<login>jankowal</login>
+<price>30.76</price>
+</action>
+
+<action name="IssueBook">
+<login>jankowal</login>
+<title>30.76</title>
+</action>
+
+<action name="WriteHistory">
+<userid>473</userid>
+<bookid>3</bookid>
+</action>
+
+<action name="TransferMoney">
+<login>jankowal</login>
+<amount>50.00</amount>
+</action>
+
+<action name="BookReturn">
+	<login>jankowal</login>
+	<bookid>3</bookid>
+</action>
