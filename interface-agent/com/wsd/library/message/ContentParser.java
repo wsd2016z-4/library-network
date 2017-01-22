@@ -74,7 +74,7 @@ public class ContentParser {
 			return null;
 	}
 	
-	public List<BooksData> getBooksIdList() {
+	public List<BooksData> getBooksList() {
 		Element rootElement = getRootElement();
 		List<Element> books = rootElement.getChildren();
 		List<BooksData> ret = new ArrayList<BooksData>();

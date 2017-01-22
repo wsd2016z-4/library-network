@@ -15,11 +15,10 @@ import jade.lang.acl.ACLMessage;
 
 public class MessageCreator {
 	
-	public ACLMessage searchBookMessage(String title, List<AID> receivers) {
+	public ACLMessage searchBookMessage(String title, AID receiver) {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-		for (AID receiver : receivers)
-			message.addReceiver(receiver);
-		String content = "<action name=\"searchBooks\"><book status=\"available\"><title>" 
+		message.addReceiver(receiver);
+		String content = "<action name=\"SearchBook\"><book><title>" 
 											+ title + "</title></book></action>";
 		message.setContent(content);
 		return message;
