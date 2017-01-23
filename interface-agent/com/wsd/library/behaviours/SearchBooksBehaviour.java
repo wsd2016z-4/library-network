@@ -42,7 +42,7 @@ public class SearchBooksBehaviour extends Behaviour {
 			break;
 		case 1:
 			// Odebranie odpowiedzi od agentów i dodanie do bookIdWarehouseMap
-			ACLMessage reply = myAgent.receive(messageTemplate);
+			ACLMessage reply = ((InterfaceAgent) myAgent).getCurrentMessage();
 			if (reply != null && messageTemplate.match(reply)) {
 				ContentParser contentParser = new ContentParser(reply.getContent());
 				if (reply.getPerformative() == ACLMessage.CONFIRM) {
