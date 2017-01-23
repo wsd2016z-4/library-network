@@ -6,4 +6,5 @@ public enum DroneStatus {
 	IN_TRANSIT,
 	CHARGING,
 	TOO_FAR,
+	INVALID_WAREHOUSE
 }

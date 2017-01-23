@@ -1,25 +1,22 @@
 package com.wsd.library.behaviours;
 
 import com.wsd.library.agent.DroneAgent;
+import com.wsd.library.agent.DroneStatus;
+import com.wsd.library.message.BookInfo;
 import com.wsd.library.message.ContentParser;
 import com.wsd.library.message.MessageCreator;
+import com.wsd.library.message.WarehouseInfo;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
-import com.wsd.library.agent.DroneStatus;
-import java.util.UUID;
-import com.wsd.library.message.BookInfo;
-import com.wsd.library.message.WarehouseInfo;
 
 
 public class DroneAgentServiceBehaviour extends CyclicBehaviour {
 	private DroneAgent mAgentRef = null;
 	private Logger mLogger = Logger.getMyLogger(getClass().getName());
 	private MessageTemplate mExpectedTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-
-	private UUID mSessionID;
 
 	public DroneAgentServiceBehaviour(DroneAgent a) {
 		super(a);
@@ -61,31 +58,22 @@ public class DroneAgentServiceBehaviour extends CyclicBehaviour {
 		reply.setPerformative(ACLMessage.INFORM);
 		DroneStatus status = mAgentRef.canTransferBook(book, from, to);
 		if (status == DroneStatus.AVAILABLE)
-		{
-			mSessionID = UUID.randomUUID();
-			reply.setContent(msgCreator.FormAvailableResponse(mSessionID.toString(), 10, 10));
-		}
+			reply.setContent(msgCreator.FormAvailableResponse(10, 10));
 		else
-		{
-			String reason;
-			switch (status)
-			{
-			case INIT: reason = "UNINITIALIZED"; break;
-			case IN_TRANSIT: reason = "IN_TRANSIT"; break;
-			case CHARGING: reason = "CHARGING"; break;
-			case TOO_FAR: reason = "TOO_FAR"; break;
-			default: reason = "OTHER"; break;
-			}
-			reply.setContent(msgCreator.FormNotAvailableResponse(reason));
-		}
+			reply.setContent(msgCreator.FormNotAvailableResponse(status.toString()));
 	}
 
 	void OrderDrone(ACLMessage msg, ACLMessage reply) {
-		// TODO must ask DroneAgent to decide whether to accept the order or not and reply accordingly
 		MessageCreator msgCreator = new MessageCreator();
 
 		reply.setPerformative(ACLMessage.REFUSE);
-		reply.setContent(msgCreator.FormNotAvailableResponse("Not implemented"));
+		//DroneStatus status = mAgentRef.transferBook(book, from, to);
+		DroneStatus status = DroneStatus.TOO_FAR;
+		if (status == DroneStatus.IN_TRANSIT)
+			// drone took the job and does its flight, all is good
+			reply.setContent(msgCreator.FormOrderAcceptedResponse(100));
+		else
+			reply.setContent(msgCreator.FormOrderDeniedResponse(status.toString()));
 	}
 
 	void NotUnderstood(ACLMessage msg, ACLMessage reply, String act) {
@@ -95,6 +83,7 @@ public class DroneAgentServiceBehaviour extends CyclicBehaviour {
 		reply.setContent("( (Unexpected-act " + act + "))");
 	}
 
+	@Override
 	public void action() {
 		mLogger.log(Logger.INFO, mAgentRef.getLocalName() + ": Alive, waiting for transfer. Battery at "
 				+ Float.toString(mAgentRef.getBatteryStatus()));
