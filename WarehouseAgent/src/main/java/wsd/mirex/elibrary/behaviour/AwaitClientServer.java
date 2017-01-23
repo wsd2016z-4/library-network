@@ -22,34 +22,32 @@ public class AwaitClientServer extends CyclicBehaviour
 
             switch (actionType)
             {
-                case BehaviourTypes.RELEASE_BOOK_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReleaseBookBehaviour(contentParser.getRootElement()));
+                case BehaviourTypes.RETURN_BOOK_BEHAVIOUR:
+                    myAgent.addBehaviour(new ReturnBookBehaviour(msg));
                     break;
-                case BehaviourTypes.RELEASE_REQUEST_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReleaseRequestBehaviour());
+                case BehaviourTypes.CHECK_AVAILABILITY_BEHAVIOUR:
+                    myAgent.addBehaviour(new CheckAvailabilityBehaviour(msg));
                     break;
-                case BehaviourTypes.RELEASE_STATUS_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReleaseStatusBehaviour());
+                case BehaviourTypes.ISSUE_BOOK_BEHAVIOUR:
+                    myAgent.addBehaviour(new IssueBookBehaviour(msg));
                     break;
-                case BehaviourTypes.RETURNED_BOOK_INFO_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReturnedBookInfoBehaviour());
+                case BehaviourTypes.ORDER_BOOK_BEHAVIOUR:
+                    myAgent.addBehaviour(new OrderBookBehaviour(msg));
                     break;
-                case BehaviourTypes.RETURN_LIST_OF_BOOKS_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReturnListOfBooksBehaviour());
+                case BehaviourTypes.ORDER_DRONE_BEHAVIOUR:
+                    myAgent.addBehaviour(new OrderDroneBehaviour(msg));
                     break;
-                case BehaviourTypes.RETURN_REQUEST_BEHAVIOUR:
-                        myAgent.addBehaviour(new ReturnRequestBehaviour());
-                    break;
-                case BehaviourTypes.SEARCH_BOOK_REQUEST_BEHAVIOUR:
-                        myAgent.addBehaviour(new SearchBookRequestBehaviour(contentParser.getRootElement()));
-                    break;
-                case BehaviourTypes.TAKE_BOOK_BEHAVIOUR:
-                        myAgent.addBehaviour(new TakeBookBehaviour());
+                case BehaviourTypes.SEARCH_BOOK_BEHAVIOUR:
+                    myAgent.addBehaviour(new SearchBookBehaviour(msg));
                     break;
                 default:
                     System.out.println("No action type.");
                     break;
             }
+        }
+        else
+        {
+            block();
         }
     }
 }

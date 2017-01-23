@@ -2,6 +2,7 @@ package wsd.mirex.elibrary.dao;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import wsd.mirex.elibrary.db.SessionFactoryProvider;
 import wsd.mirex.elibrary.model.Book;
@@ -26,6 +27,13 @@ public class BookDao
         return session;
     }
 
+    /** Sprawdza zajetosc bazy danych */
+    public Integer getBooksCount()
+    {
+        Criteria cr = getSession().createCriteria(Book.class);
+        return  ((Number)cr.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+    }
+
     /** Wyszukanie ksiazki po ID w bazie danych */
     public Book findById(Integer id)
     {
@@ -43,11 +51,11 @@ public class BookDao
     }
 
     /** Wyszukanie ksiazki po tytule */
-    public Book findByTitle(String title)
+    public List<Book> findByTitle(String title)
     {
         Criteria cr = getSession().createCriteria(Book.class);
         cr.add(Restrictions.eq("title", title));
-        return (Book) cr.uniqueResult();
+        return cr.list();
     }
 
     /** Wyszukanie wszystkich ksiazek danego autora */
