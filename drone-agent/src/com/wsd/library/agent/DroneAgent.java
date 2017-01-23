@@ -1,17 +1,16 @@
 package com.wsd.library.agent;
 
 import com.wsd.library.behaviours.DroneAgentServiceBehaviour;
+import com.wsd.library.message.BookInfo;
+import com.wsd.library.message.CoordInfo;
+import com.wsd.library.message.WarehouseInfo;
 
 import jade.core.Agent;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.util.Logger;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import com.wsd.library.agent.DroneStatus;
-import com.wsd.library.message.BookInfo;
-import com.wsd.library.message.WarehouseInfo;
-import com.wsd.library.message.CoordInfo;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.util.Logger;
 
 
 public class DroneAgent extends Agent {
@@ -26,8 +25,15 @@ public class DroneAgent extends Agent {
 	/* Current localization */
 	private CoordInfo mCoords;
 
+	private BookInfo mCurrentBook = null;
+
+	/* Drone speed of travel, in km/h */
+	private double mDroneSpeed = 10.0f; // kmh
+
 	/* Current status */
 	private DroneStatus mDroneStatus = DroneStatus.INIT;
+
+	private Thread mActionThread;
 
 	public float getBatteryStatus() {
 		return mBatteryStatus;
@@ -39,6 +45,10 @@ public class DroneAgent extends Agent {
 
 	public CoordInfo getCurrentLocation() {
 		return mCoords;
+	}
+
+	void SetStatus(DroneStatus newStatus) {
+		mDroneStatus = newStatus;
 	}
 
 	// calculates distance between two coordinates (Haversine formula)
@@ -60,6 +70,9 @@ public class DroneAgent extends Agent {
 		if (mDroneStatus != DroneStatus.AVAILABLE)
 			return mDroneStatus; // we cannot transfer because of reasons
 
+		if (from.coords.latitude != mCoords.latitude || from.coords.longitude != mCoords.longitude)
+			return DroneStatus.INVALID_WAREHOUSE; // we are in not good warehouse
+
 		// we are available - check if range fits
 		double distance = calculatePath(mCoords, from.coords); // from drone to source warehouse
 		distance += calculatePath(from.coords, to.coords); // from source to destination warehouse
@@ -71,6 +84,20 @@ public class DroneAgent extends Agent {
 		return mDroneStatus;
 	}
 
+	public DroneStatus transferBook(BookInfo book, WarehouseInfo from, WarehouseInfo to) {
+		DroneStatus canTransfer = canTransferBook(book, from, to);
+		if (canTransfer != DroneStatus.AVAILABLE)
+			return canTransfer;
+
+		mCurrentBook = book;
+		mDroneStatus = DroneStatus.IN_TRANSIT;
+
+		//mActionThread.run();
+
+		return mDroneStatus;
+	}
+
+	@Override
 	protected void setup() {
 		mLogger.log(Logger.INFO, "Drone " + getLocalName() + " initializing.");
 
@@ -95,6 +122,7 @@ public class DroneAgent extends Agent {
 
 		// set arbitrary drone position here
 		mCoords = new CoordInfo(21.201245, 52.201452);
+		mActionThread = new DroneTransferThread(this);
 
 		mLogger.log(Logger.INFO, "Drone " + getLocalName() + " reporting for duty.");
 	}
